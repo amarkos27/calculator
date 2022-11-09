@@ -1,0 +1,51 @@
+*{
+    box-sizing: border-box;
+}
+
+body,
+html{
+    margin: 0;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.calculator{
+    display: flex;
+    flex-direction: column;
+    width: 128px;
+    height: 160px;
+}
+
+.buttons{
+    display: flex;
+    flex: 1;
+}
+
+.numbers{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.operators{
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: end;
+    flex: 0.25;
+}
+
+.numbers > div,
+.operators > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
