@@ -1,5 +1,11 @@
 *{
     box-sizing: border-box;
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 body,
@@ -7,18 +13,33 @@ html{
     margin: 0;
 }
 
+body{
+    background-color: #f2f2f2;
+}
+
+h1{
+    text-align: center;
+}
+
+.screen{
+    background-color: rgba(34, 40, 49, 0.65);
+    border-radius: 10px 10px 0 0;
+    flex: 0.4;
+}
+
 .container{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 90vh;
+    width: 100%;
 }
 
 .calculator{
     display: flex;
     flex-direction: column;
-    width: 128px;
-    height: 160px;
+    height: 480px;
+    width: 300px;
 }
 
 .buttons{
@@ -29,15 +50,12 @@ html{
 .numbers{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    justify-content: center;
-    align-items: center;
     flex: 1;
 }
 
 .operators{
     display: grid;
     grid-template-columns: 1fr;
-    align-items: end;
     flex: 0.25;
 }
 
@@ -46,6 +64,19 @@ html{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
+    color: #f2f2f2;
+    border: 1px solid #393e46;
+    cursor: default;
+}
+
+div.down{
+    border: 3px solid #393e46;
+}
+
+.numbers > div{
+    background-color: rgba(34, 40, 49, 0.8);
+}
+
+.operators > div{
+    background-color: #f96d00;
 }
