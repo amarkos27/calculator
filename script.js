@@ -32,27 +32,48 @@ function Calculator(){
         this.screen.textContent = this.expression;
     };
 
-    this.evaluate = function(button){
+    this.handler = function(button){
         if(button.textContent === 'Clear'){
             this.expression = '';
         }else if(button.parentNode.classList.contains('numbers')){
             this.expression += button.textContent;
         }else{
             let operatorCheck = /\D/;
-            if(this.expression.split().some(char => operatorCheck.test(char))){
-                console.log('o');
-            }else{
-                this.expression += button.textContent;
+            let operator = this.expression.split('').find(char => operatorCheck.test(char));
+            if(operator){
+                this.evaluate(operator);
             }
+            this.expression += button.textContent;
         }
         this.display();
     };
-}
 
-function fill(){
-    
-}
+    this.evaluate = function(operator){
+        let operands = null;
+        if(this.expression[0] === '-'){
+            operands = this.expression.slice(1).split(operator);
+        } else{
+            operands = this.expression.split(operator);
+        }
+        console.log(operands);
+        switch(operator){
+            case '+':
+                this.expression = add(operands);
+                break;
+            case '-':
+                this.expression = subtract(operands);
+                break;
+        }
+    };
 
+    function add(operands){
+        return +operands[0] + +operands[1];
+    }
+
+    function subtract(operands){
+        return operands[0] - operands[1];
+    }
+}
 function Button(button){
     this.div = document.createElement('div');
     this.div.textContent = button;
@@ -71,7 +92,7 @@ function Button(button){
     function mouseup(e, button){
         if(e.target.classList.contains('down')){
             e.target.classList.toggle('down');
-            calculator.evaluate(button);
+            calculator.handler(button);
         }
         removeListeners(button);
     }
