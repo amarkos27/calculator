@@ -1,7 +1,8 @@
 function Calculator(){
     this.numbers = ['Clear', 7, 8, 9, 4, 5, 6, 1, 2, 3, 0, '.'];
     this.operators = ['÷','×','-','+', '='];
-    this.screen = document.querySelector('.screen');
+    this.content = document.querySelector('.contentWrapper');
+    this.font_size = window.getComputedStyle(this.content).fontSize;
     this.expression = '';
 
     this.fill = function(){
@@ -29,32 +30,42 @@ function Calculator(){
     };
     
     this.display = function(){
-        this.screen.textContent = this.expression;
+        if(this.expression != ''){ //Only modify font if expression is not empty
+            let num = this.font_size.split('').filter(char => /[\d\.]/.test(char)).join('');
+            if(this.content.getBoundingClientRect().width >= 
+            this.content.parentNode.getBoundingClientRect().width - 40){
+                num *= 0.8;
+            }
+            this.font_size = `${num}px`;
+            this.content.style.fontSize = this.font_size;
+        }
+        this.content.textContent = this.expression;
     };
 
     this.handler = function(button){
         if(button.textContent === 'Clear'){
             this.expression = '';
+            this.font_size = '50px';
         }else if(button.parentNode.classList.contains('numbers')){
             this.expression += button.textContent;
-        }else{
-            let operatorCheck = /\D/;
-            let operator = this.expression.split('').find(char => operatorCheck.test(char));
-            if(operator){
-                this.evaluate(operator);
+        }else{ //if button is an operator
+            if(this.expression !== ''){
+                //Discount first - sign if operand is negative
+                let operator = this.expression.split('').find((char, index) => /[÷×\-\+]/.test(char) && index > 0);
+                if(operator){
+                    this.evaluate(operator);
+                }
+                if(button.textContent !== '='){
+                    this.expression += button.textContent;
+                }
             }
-            this.expression += button.textContent;
         }
         this.display();
     };
 
     this.evaluate = function(operator){
-        let operands = null;
-        if(this.expression[0] === '-'){
-            operands = this.expression.slice(1).split(operator);
-        } else{
-            operands = this.expression.split(operator);
-        }
+        let splitPoint = this.expression.split('').findIndex((char, index) => /[÷×\-\+]/.test(char) && index > 0);
+        let operands = [this.expression.slice(0, splitPoint), this.expression.slice(splitPoint + 1)];
         console.log(operands);
         switch(operator){
             case '+':
@@ -63,15 +74,31 @@ function Calculator(){
             case '-':
                 this.expression = subtract(operands);
                 break;
+            case '×':
+                this.expression = multiply(operands);
+                break;
+            case '÷':
+                this.expression = divide(operands);
+                break;
+            default:
+                this.expression = 'ERROR';
         }
     };
 
     function add(operands){
-        return +operands[0] + +operands[1];
+        return String(+operands[0] + +operands[1]);
     }
 
     function subtract(operands){
-        return operands[0] - operands[1];
+        return String(operands[0] - operands[1]);
+    }
+
+    function multiply(operands){
+        return String(operands[0] * operands[1]);
+    }
+
+    function divide(operands){
+        return String(operands[0] / operands[1]);
     }
 }
 function Button(button){
