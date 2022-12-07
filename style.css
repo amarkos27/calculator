@@ -21,19 +21,26 @@ h1{
 }
 
 .screen{
+    font-size: 100%;
+    min-height: 7.5rem; 
+    display: flex;
+    align-items: flex-end;
+    color: #f2f2f2;
+}
+
+.screen-cover{
     background-color: rgba(34, 40, 49, 0.65);
     border-radius: 10px 10px 0 0;
-    flex: 0.4;
+    padding: 10px;
+    font-size: 100%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
-    padding: 10px;
+    white-space: nowrap;
 }
 
-.contentWrapper{
-    width: fit-content;
+.screen-font{
     font-size: 50px;
-    color: #f2f2f2;
 }
 
 .container{
