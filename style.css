@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Audiowide';
+    src: url(./fonts/Audiowide/Audiowide-Regular.ttf) format('truetype');
+}
+
 *{
     box-sizing: border-box;
     -webkit-user-drag: none;
@@ -18,6 +23,8 @@ body{
 
 h1{
     text-align: center;
+    font-family: 'Audiowide', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: #ff570c;
 }
 
 .screen{
@@ -47,7 +54,7 @@ h1{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
+    height: 80vh;
     width: 100%;
 }
 
@@ -69,10 +76,23 @@ h1{
     flex: 1;
 }
 
+.clear{
+    grid-column: 1/4;
+}
+
+.zero{
+    grid-column: 1/3;
+    border-radius: 0 0 0 10px;
+}
+
 .operators{
     display: grid;
     grid-template-columns: 1fr;
     flex: 0.25;
+}
+
+.equals{
+    border-radius: 0 0 10px 0;
 }
 
 .numbers > div,
@@ -90,7 +110,7 @@ h1{
 }
 
 .operators > div{
-    background-color: rgb(249, 109, 0)
+    background-color: rgb(249, 109, 0);
 }
 
 .numbers > div.down{
