@@ -1,5 +1,7 @@
 let calc = {expression: '0'};
 let buttons = document.querySelectorAll('.numbers > div, .operators > div');
+let isOperator = /[\+÷\-×]/;
+let isNumber = /\d/;
     
 buttons.forEach(button => {
     button.addEventListener('mousedown', mousedown);
@@ -45,8 +47,8 @@ function removeListeners(button){
 
     Step 1. Check if first digit in either operand is a 0
     - Call getRecentOperand to get the current operand
-    - If first digit in either is a 0, replace it with whatever was just pressed. If not, add
-      to the end
+    - If first digit in either is a 0, replace it with whatever was just pressed, except for a '.'
+      or an operator. If not, add to the end
     Step 2. If button pressed was an operator, check if there was already an operator
     - If there are two operands, evaluate expression and add the recently pressed operator to the
       expression with the results.
@@ -56,21 +58,45 @@ function removeListeners(button){
       If there is, do nothing.
 */
 function validator(pressed){
-    if(firstDigitIsZero()){
-        let replace = calc.expression.split('');
-        replace[replace.length - 1] = pressed;
-        calc.expression = replace.join('');
-    }else if(decimalPresent() && pressed === '.'){
-        return;
-    }else if(operatorPresent() && /[\+÷\-×]/.test(pressed))   
-    {
+    let recentChar = calc.expression[calc.expression.length - 1]
+    if(pressed === 'Clear'){
+        calc.expression = '0';
+    }
+    else if(firstDigitIsZero() && isNumber.test(pressed)){
+        if(!getOperator()){
+            replace(pressed);
+        }else{
+            calc.expression += pressed;
+        }
+    }else if(pressed === '.'){
+        //Only add decimal if previous character is a number
+        if(!decimalPresent() && isNumber.test(recentChar)){
+            calc.expression += '.';
+        }else if(isOperator.test(recentChar)){
+            calc.expression += '0.'
+        }
+    }else if(isOperator.test(pressed)){
+        if(getOperands().length === 2){
+            evaluate();
+            calc.expression += pressed;
+        }else if(getOperator() && getOperands().length === 1){
+            replace(pressed);
+        }else{
+            calc.expression += pressed;
+        }
+    }else if(pressed === '='){
         evaluate();
-        calc.expression += pressed;
-    } 
+    }
     else{
         calc.expression += pressed;
     }
     console.log(calc.expression);
+}
+
+function replace(pressed){
+    let replace = calc.expression.split('');
+    replace[replace.length - 1] = pressed;
+    calc.expression = replace.join('');
 }
 
 function firstDigitIsZero(){
@@ -89,22 +115,59 @@ function decimalPresent(){
     }else return false;
 }
 
-function operatorPresent(){
-    return /[\+÷\-×]/.test(calc.expression);
-}
 
 function getOperands(){
-    let operands = calc.expression.split(/[\+÷\-×]/);
-    operands = operands.filter(element => element !== '');
-    return operands;
+    let splitPoint = 0;;
+    for(let i = 1; i < calc.expression.length; i++){
+        if(isOperator.test(calc.expression[i])){
+            splitPoint = i;
+            let operands = [];
+            operands[0] = calc.expression.slice(0, splitPoint);
+            operands[1] = calc.expression.slice(splitPoint + 1);
+            return operands.filter(element => element !== '');
+        }
+    }
+    return [calc.expression];
+}
+
+function getOperator(){
+    for(let i = 1; i < calc.expression.length; i++){
+        if(isOperator.test(calc.expression[i])){
+            return calc.expression[i];
+        }
+    }
+    return false;
+}
+
+/* Evaluate function
+    Handles all mathematical evaluations and returns the result
+*/
+function evaluate(){
+    let operands = getOperands();
+    let operator = getOperator();
+    let result = null;
+    
+    if(operator === '+'){
+        result = +operands[0] + +operands[1];
+        calc.expression = round(result);
+    }else if(operator === '-'){
+        result = operands[0] - operands[1];
+        calc.expression = round(result);
+    }else if(operator === '×'){
+        result = operands[0] * operands[1];
+        calc.expression = round(result);
+    }else if(operator === '÷'){
+        result = operands[0] / operands[1];
+        calc.expression = round(result);
+    }
+}
+
+function round(num){
+    return String(Math.round((num + Number.EPSILON) * 100000) / 100000);
 }
 
 /* Display Function
     Displays the current expression after it has been properly evaluated according to special cases
     Uses a mutation observer to then resize the size of the characters to always fit the size of
     the screen
-*/
-
-/* Evaluate function
-    Handles all mathematical evaluations and returns the result
 */
