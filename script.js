@@ -1,5 +1,6 @@
 let calc = {expression: '0'};
 let buttons = document.querySelectorAll('.numbers > div, .operators > div');
+let screen = document.querySelector('.screen');
 let isOperator = /[\+÷\-×]/;
 let isNumber = /\d/;
     
@@ -7,6 +8,7 @@ buttons.forEach(button => {
     button.addEventListener('mousedown', mousedown);
 });
 
+// Event listeners for proper button clicking functionality
 function mousedown(e){
     let button = e.target;
     button.classList.toggle('down');
@@ -26,6 +28,7 @@ function mouseenter(e){
     e.target.classList.toggle('down');
 }
 
+//Flow will start here when a button has actually been pressed
 function mouseup(e, button){
     removeListeners(button);
     if(e.target.parentNode.parentNode.classList.contains('buttons')){
@@ -44,18 +47,6 @@ function removeListeners(button){
     Will add the pressed character to the expression and evaluate whether any special input cases
     have occured. If so, the proper changes will be made. If not, the display function is called
     to display the current state of the expression
-
-    Step 1. Check if first digit in either operand is a 0
-    - Call getRecentOperand to get the current operand
-    - If first digit in either is a 0, replace it with whatever was just pressed, except for a '.'
-      or an operator. If not, add to the end
-    Step 2. If button pressed was an operator, check if there was already an operator
-    - If there are two operands, evaluate expression and add the recently pressed operator to the
-      expression with the results.
-    - If there is only one operand, replace the operator with the more recently pressed operator
-    Step 3. Do not allow more than one decimal per operand
-    - Again, get the most recent operand and check if there is already a decimal. If not, add it.
-      If there is, do nothing.
 */
 function validator(pressed){
     let recentChar = calc.expression[calc.expression.length - 1]
@@ -90,7 +81,7 @@ function validator(pressed){
     else{
         calc.expression += pressed;
     }
-    console.log(calc.expression);
+    display();
 }
 
 function replace(pressed){
@@ -140,7 +131,7 @@ function getOperator(){
 }
 
 /* Evaluate function
-    Handles all mathematical evaluations and returns the result
+    Handles all mathematical evaluations and adds result to the expression
 */
 function evaluate(){
     let operands = getOperands();
@@ -168,6 +159,30 @@ function round(num){
 
 /* Display Function
     Displays the current expression after it has been properly evaluated according to special cases
-    Uses a mutation observer to then resize the size of the characters to always fit the size of
-    the screen
 */
+function display(){
+    screen.textContent = calc.expression;
+}
+
+/** Resize font based on window space **/
+let screenCover = document.querySelector('.screen-cover');
+let displaySize;
+
+let config = {
+    attributes: true,
+    childList: true,
+    characterData: true,
+};
+
+let displayObserver = new MutationObserver(function(mutations){
+    displaySize = 100;
+    screenCover.style.cssText = 'font-size:' + displaySize + '%';
+
+    while(screen.offsetWidth > screenCover.offsetWidth - 20){
+        displaySize -= 1;
+        screenCover.style.cssText = 'font-size:' + displaySize + '%';
+    }
+});
+
+displayObserver.observe(screen, config);
+/***************************************/
