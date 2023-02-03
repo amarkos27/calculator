@@ -76,7 +76,12 @@ function validator(pressed){
             calc.expression += pressed;
         }
     }else if(pressed === '='){
-        evaluate();
+        if(getOperands().length === 2){
+            evaluate();
+        }
+        else{
+            return;
+        }
     }
     else{
         calc.expression += pressed;
