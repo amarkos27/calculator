@@ -4,6 +4,9 @@ let screen = document.querySelector('.screen');
 let isOperator = /[\+÷\-×]/;
 let isNumber = /\d/;
     
+
+display();
+
 buttons.forEach(button => {
     button.addEventListener('mousedown', mousedown);
 });
@@ -34,6 +37,7 @@ function mouseup(e, button){
     if(e.target.parentNode.parentNode.classList.contains('buttons')){
         e.target.classList.toggle('down');
         validator(e.target.textContent);
+        display();
     }
 }
 
@@ -86,7 +90,6 @@ function validator(pressed){
     else{
         calc.expression += pressed;
     }
-    display();
 }
 
 function replace(pressed){
