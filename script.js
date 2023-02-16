@@ -56,6 +56,15 @@ function validator(pressed){
     let recentChar = calc.expression[calc.expression.length - 1]
     if(pressed === 'Clear'){
         calc.expression = '0';
+        return;
+    }
+    if(calc.expression === 'ERROR, divide by 0'){
+        if(isNumber.test(pressed)){
+            calc.expression = pressed;
+            return;
+        }else if (isOperator.test(pressed)){
+            return;
+        }
     }
     else if(firstDigitIsZero() && isNumber.test(pressed)){
         if(!getOperator()){
@@ -145,6 +154,10 @@ function evaluate(){
     let operands = getOperands();
     let operator = getOperator();
     let result = null;
+
+    if(operands[1] === '0.'){
+        operands[1] = '0';
+    }
     
     if(operator === '+'){
         result = +operands[0] + +operands[1];
@@ -156,6 +169,10 @@ function evaluate(){
         result = operands[0] * operands[1];
         calc.expression = round(result);
     }else if(operator === '÷'){
+        if(operands[1] === '0'){
+            calc.expression = 'ERROR, divide by 0';
+            return;
+        }
         result = operands[0] / operands[1];
         calc.expression = round(result);
     }
