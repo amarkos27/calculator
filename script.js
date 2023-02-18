@@ -67,11 +67,7 @@ function validator(pressed){
         }
     }
     else if(firstDigitIsZero() && isNumber.test(pressed)){
-        if(!getOperator()){
-            replace(pressed);
-        }else{
-            calc.expression += pressed;
-        }
+        replace(pressed);
     }else if(pressed === '.'){
         //Only add decimal if previous character is a number
         if(!decimalPresent() && isNumber.test(recentChar)){
