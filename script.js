@@ -1,22 +1,22 @@
-let calc = { expression: "0" };
-let buttons = document.querySelectorAll(".numbers > div, .operators > div");
-let screen = document.querySelector(".screen");
+let calc = { expression: '0' };
+let buttons = document.querySelectorAll('.numbers > div, .operators > div');
+let screen = document.querySelector('.screen');
 let isOperator = /[\+÷\-×]/;
 let isNumber = /\d/;
 
 display();
 
 buttons.forEach((button) => {
-  button.addEventListener("mousedown", mousedown);
+  button.addEventListener('mousedown', mousedown);
 });
 
 // Event listeners for proper button clicking functionality
 function mousedown(e) {
   let button = e.target;
-  button.classList.toggle("down");
-  button.addEventListener("mouseleave", mouseleave);
+  button.classList.toggle('down');
+  button.addEventListener('mouseleave', mouseleave);
   window.addEventListener(
-    "mouseup",
+    'mouseup',
     (e) => {
       mouseup(e, button);
     },
@@ -26,27 +26,27 @@ function mousedown(e) {
 
 function mouseleave(e) {
   let button = e.target;
-  button.classList.toggle("down");
-  button.addEventListener("mouseenter", mouseenter, { once: true });
+  button.classList.toggle('down');
+  button.addEventListener('mouseenter', mouseenter, { once: true });
 }
 
 function mouseenter(e) {
-  e.target.classList.toggle("down");
+  e.target.classList.toggle('down');
 }
 
 //Flow will start here when a button has actually been pressed
 function mouseup(e, button) {
   removeListeners(button);
-  if (e.target.parentNode.parentNode.classList.contains("buttons")) {
-    e.target.classList.toggle("down");
+  if (e.target === button) {
+    e.target.classList.toggle('down');
     validator(e.target.textContent);
     display();
   }
 }
 
 function removeListeners(button) {
-  button.removeEventListener("mouseleave", mouseleave);
-  button.removeEventListener("mouseenter", mouseenter, { once: true });
+  button.removeEventListener('mouseleave', mouseleave);
+  button.removeEventListener('mouseenter', mouseenter, { once: true });
 }
 
 /* Validator Function
@@ -57,36 +57,39 @@ function removeListeners(button) {
 */
 function validator(pressed) {
   let recentChar = calc.expression[calc.expression.length - 1];
-  if (pressed === "Clear") {
-    calc.expression = "0";
+  if (pressed === 'Clear') {
+    calc.expression = '0';
     return;
   }
-  if (calc.expression === "ERROR, divide by 0") {
+  if (calc.expression === 'ERROR, divide by 0') {
     if (isNumber.test(pressed)) {
       calc.expression = pressed;
       return;
     } else if (isOperator.test(pressed)) {
       return;
     }
-  } else if (firstDigitIsZero() && isNumber.test(pressed)) {
+  } else if (firstDigitIsZero() && isNumber.test(pressed) && !getOperator()) {
     replace(pressed);
-  } else if (pressed === ".") {
+  } else if (pressed === '.') {
     //Only add decimal if previous character is a number
     if (!decimalPresent() && isNumber.test(recentChar)) {
-      calc.expression += ".";
+      calc.expression += '.';
     } else if (isOperator.test(recentChar)) {
-      calc.expression += "0.";
+      calc.expression += '0.';
     }
   } else if (isOperator.test(pressed)) {
     if (getOperands().length === 2) {
       evaluate();
       calc.expression += pressed;
-    } else if (getOperator() && getOperands().length === 1) {
+    } else if (
+      (getOperator() && getOperands().length === 1) ||
+      recentChar === '.'
+    ) {
       replace(pressed);
     } else {
       calc.expression += pressed;
     }
-  } else if (pressed === "=") {
+  } else if (pressed === '=') {
     if (getOperands().length === 2) {
       evaluate();
     } else {
@@ -98,15 +101,15 @@ function validator(pressed) {
 }
 
 function replace(pressed) {
-  let replace = calc.expression.split("");
+  let replace = calc.expression.split('');
   replace[replace.length - 1] = pressed;
-  calc.expression = replace.join("");
+  calc.expression = replace.join('');
 }
 
 function firstDigitIsZero() {
   let operands = getOperands();
   let recentOperand = operands[operands.length - 1];
-  if (recentOperand === "0") {
+  if (recentOperand === '0') {
     return true;
   } else return false;
 }
@@ -114,7 +117,7 @@ function firstDigitIsZero() {
 function decimalPresent() {
   let operands = getOperands();
   let recentOperand = operands[operands.length - 1];
-  if (recentOperand.includes(".")) {
+  if (recentOperand.includes('.')) {
     return true;
   } else return false;
 }
@@ -127,7 +130,7 @@ function getOperands() {
       let operands = [];
       operands[0] = calc.expression.slice(0, splitPoint);
       operands[1] = calc.expression.slice(splitPoint + 1);
-      return operands.filter((element) => element !== "");
+      return operands.filter((element) => element !== '');
     }
   }
   return [calc.expression];
@@ -150,22 +153,22 @@ function evaluate() {
   let operator = getOperator();
   let result = null;
 
-  if (operands[1] === "0.") {
-    operands[1] = "0";
+  if (operands[1] === '0.') {
+    operands[1] = '0';
   }
 
-  if (operator === "+") {
+  if (operator === '+') {
     result = +operands[0] + +operands[1];
     calc.expression = round(result);
-  } else if (operator === "-") {
+  } else if (operator === '-') {
     result = operands[0] - operands[1];
     calc.expression = round(result);
-  } else if (operator === "×") {
+  } else if (operator === '×') {
     result = operands[0] * operands[1];
     calc.expression = round(result);
-  } else if (operator === "÷") {
-    if (operands[1] === "0") {
-      calc.expression = "ERROR, divide by 0";
+  } else if (operator === '÷') {
+    if (operands[1] === '0') {
+      calc.expression = 'ERROR, divide by 0';
       return;
     }
     result = operands[0] / operands[1];
@@ -185,7 +188,7 @@ function display() {
 }
 
 /** Resize font based on window space **/
-let screenCover = document.querySelector(".screen-cover");
+let screenCover = document.querySelector('.screen-cover');
 let displaySize;
 
 let config = {
@@ -196,11 +199,11 @@ let config = {
 
 let displayObserver = new MutationObserver(function (mutations) {
   displaySize = 100;
-  screenCover.style.cssText = "font-size:" + displaySize + "%";
+  screenCover.style.cssText = 'font-size:' + displaySize + '%';
 
   while (screen.offsetWidth > screenCover.offsetWidth - 20) {
     displaySize -= 1;
-    screenCover.style.cssText = "font-size:" + displaySize + "%";
+    screenCover.style.cssText = 'font-size:' + displaySize + '%';
   }
 });
 
