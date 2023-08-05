@@ -167,7 +167,7 @@ function evaluate() {
     result = operands[0] * operands[1];
     calc.expression = round(result);
   } else if (operator === '÷') {
-    if (operands[1] === '0') {
+    if (parseInt(operands[1]) === 0) {
       calc.expression = 'ERROR, divide by 0';
       return;
     }
